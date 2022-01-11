@@ -4,20 +4,21 @@ import java.awt.*;
 
 public class Application {
 
-	//metodos
+	// methods
 	private static void createAndShowGUI() {			
-		//creamos el JFrame
+		// JFrame creation
 		JFrame.setDefaultLookAndFeelDecorated(true); 
 		JFrame frame = new JFrame("Practica 5");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		//creamos la ventana y sus componentes y los anyadimos al JFrame	
+		// Window and components creation	
 		Window app = new Window();
 		Component contents = app.createComponents();
+		// add on JFrame
 		frame.getContentPane().add(contents, BorderLayout.CENTER);
 		frame.pack();
 		
-		//establecemos los atributos del JFrame
+		// JFrame attributes established
 		frame.setSize(800, 600);
 		frame.setVisible(true);
 	}
