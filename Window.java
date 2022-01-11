@@ -4,46 +4,46 @@ import java.awt.event.*;
 
 public class Window implements ActionListener {
 
-	// atributos
-	private Diagram diagram; // superficie de dibujo
+	// attributes
+	private Diagram diagram; // draw management
 	private JPanel panel;
 	private GridBagConstraints c;
-	private JButton button; // para añadir clases
+	private JButton button; // used to add class
 	private JLabel labelNClasses;
 	private JLabel labelNAssociations;
 
-	// metodos
+	// methods
 	public Window() {
 		super();
-		// creamos el panel y el grid
+		// JPanel creation and grid
 		panel = new JPanel(new GridBagLayout());
 		c = new GridBagConstraints();
 	}
 
 	public Component createComponents() {
-		// creamos el boton de añadir clases y lo ponemos en el panel
+		// Add class JButton to Jpanel
 		button = new JButton("Add Class");
 		button.setMnemonic(KeyEvent.VK_I);
 		button.addActionListener(this);
 		setGridProperties(0, 0, 1, 1, 0, 0, GridBagConstraints.NONE);
 		panel.add(button, c);
 
-		// creamos el diagrama y lo ponemos en el panel
+		// Diagram creation
 		diagram = new Diagram(this);
 		setGridProperties(0, 1, 4, 3, 1.0, 1.0, GridBagConstraints.BOTH);
 		panel.add(diagram, c);
 
-		// creamos la etiqueta para contar clases y lo ponemos en el panel
+		// Class counter creation
 		labelNClasses = new JLabel("Classes: " + diagram.getNClasses());
 		setGridProperties(0, 4, 2, 1, 0, 0, GridBagConstraints.HORIZONTAL);
 		panel.add(labelNClasses, c);
 
-		// creamos la etiqueta para contar asociaciones y lo ponemos en el panel
+		// Association counter creation
 		labelNAssociations = new JLabel("Associations: " + diagram.getNAssociations());
 		setGridProperties(2, 4, 2, 1, 0, 0, GridBagConstraints.HORIZONTAL);
 		panel.add(labelNAssociations, c);
 
-		// ultimos ajustes del panel
+		// border settings
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		return panel;
 	}
@@ -58,16 +58,16 @@ public class Window implements ActionListener {
 		c.weighty = weighty;
 		c.fill = fill;
 	}
-
+	// Define JButton interaction
 	public void actionPerformed(ActionEvent e) {
 		diagram.addClass();
 		diagram.requestFocusInWindow();
 	}
-
+	// Update class count
 	public void updateNClasses(Diagram d) {
 		labelNClasses.setText("Classes: " + d.getNClasses());
 	}
-
+	// Update associations count
 	public void updateNAssociations(Diagram d) {
 		labelNAssociations.setText("Associations: " + diagram.getNAssociations());
 	}
