@@ -4,7 +4,6 @@ import java.awt.event.*;
 
 public class Window implements ActionListener {
 
-	// attributes
 	private Diagram diagram; // draw management
 	private JPanel panel;
 	private GridBagConstraints c;
