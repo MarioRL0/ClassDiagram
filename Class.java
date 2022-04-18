@@ -8,7 +8,6 @@ import java.util.Vector;
 
 public class Class {
 
-	// attributes
 	private int _x;
 	private int _y;
 	private int width = 175;
@@ -30,17 +29,16 @@ public class Class {
 	public void draw(Graphics g) {
 		
 		Graphics2D g2 = (Graphics2D) g;
-		// ponemos el color con el que rellenamos el rectangulo
 		Rectangle2D rectangulo = new Rectangle2D.Double(_x, _y, width, height);
 		Line2D linea1 = new Line2D.Double(_x, _y + 50, _x + width, _y + 50);
 		Line2D linea2 = new Line2D.Double(_x, _y + 150, _x + width, _y + 150);
-		// class is selected, cyan
+		// class is selected (cyan background)
 		if (!_selected && _preselected)
 			g2.setColor(Color.cyan);
-		// class is preselected
+		// class is preselected (green background)
 		else if (_selected)
 			g2.setColor(Color.green);
-		// class is not selected
+		// class is not selected (white background)
 		else
 			g2.setColor(Color.white);
 		g2.fillRect(_x, _y, width, height);
