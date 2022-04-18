@@ -7,30 +7,25 @@ import java.util.*;
 
 public class Diagram extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 
-	// atributos
-	private Window window;// Ventana en la que est√° el diagrama
+	
+	private Window window;// diagram's window
 	public Class clase;
 
-	private Vector<Class> classes = new Vector(); // las clases que crea el
-													// usuario
-	private Vector<Association> associations = new Vector(); // las asociaciones
-																// que crea el
-	// usuario
+	private Vector<Class> classes = new Vector(); // it stores the classes
+	private Vector<Association> associations = new Vector(); // it stores the associations
 
-	// Variables metodo keyTyped()
-	private boolean preselectedClassBool = false; // Lo inicializamos a false
-													// pero en un
-	// futuro
-	// se cambia en metodo
-	private Class preselectedClass;
+	// attributes which are used in keyTyped()
+	private boolean preselectedClassBool = false; // true when a class is preselected
+	
+	private Class preselectedClass; // the class which is preselected
 
-	// Variables globales (addClass)
+	// attributes which are used in addClass()
 	private String newClassName;
 	private int classCounter = 0;
 	private int x = 50;
 	private int y = 50;
 
-	// Atributos metodo mouseOn()
+	// attributes which are used in mouseOn()
 	private Rectangle rec;
 	private Class classOn;
 	private Class classOnPrev = null;
@@ -40,15 +35,15 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 	private int wid;
 	private int hei;
 
-	// Atributos del metodo keyTypped()
+	// attributes which are used in keyTypped()
 	private boolean sTyped;
 	private boolean STyped;
 
-	// Atributos metodo mouseDragged()
+	// attributes which are used in mouseDragged()
 	private boolean assocToCrea = false;
 	private boolean unionBool = false;
 
-	// Atributos para borrar asoc
+	// attributes which are used to clear associations
 	private Vector<Association> assocToRemove = new Vector();
 
 	Association newAssoc;
@@ -59,7 +54,6 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 	int coorX2;
 	int coorY2;
 
-	// metodos
 	public Diagram(Window theWindow) {
 		window = theWindow;
 		addMouseListener(this);
@@ -88,18 +82,20 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 	}
 
 	public void paint(Graphics g) {
-		// Dibuja el diagrama de clases
+		
 		super.paint(g);
-		// Recorre el vector de asociaciones y las dibuja una a una
+		// go through the association's vector, to draw associations
 		for (int i = 0; i < associations.size(); i++) {
 			associations.get(i).draw(g);
 		}
+		
 		if (unionBool) {
 			Graphics2D g2 = (Graphics2D) g;
 			Line2D union = new Line2D.Double(coorX1, coorY1, coorX2, coorY2);
 			g2.draw(union);
 		}
-		// Recorre el vector de clases y las dibuja una a una
+		
+		// go through the class's vector, to draw classes
 		for (int i = 0; i < classes.size(); i++) {
 			classes.get(i).draw(g);
 		}
@@ -107,12 +103,13 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 	}
 
 	/*
-	 * A este metodo se le llama cada vez que el raton pasa por encima de una
-	 * clase y esta no es la ultima del vector de clases
+	 * This method is called every time the mouse passes over a class 
+	 * and this is not the last one in the array of classes.
 	 */
+	
 	public void overlap() {
-		// Recorre el vector de clases reorganizandolo de forma que la clase
-		// sobre la que esta situada el raton sea la ultima del vector
+		// It goes through the vector of classes rearranging it so that the class
+		// on which the mouse is located is the last one in the vector.
 		for (int j = indexClassOn; j < classes.size() - 1; j++) {
 			classes.set(j, classes.elementAt(j + 1));
 		}
@@ -120,10 +117,10 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 	}
 
 	/********************************************/
-	/********* Metodos de MouseListener *********/
+	/********* MouseListener's methods **********/
 	/********************************************/
 
-	/* A este metodo se le llama cuando un boton de nuestro raton es pulsado */
+	/* This method is called when a mouse button is pressed */
 	public void mousePressed(MouseEvent e) {
 		if ((classOn == preselectedClass) && preselectedClassBool) {
 			assocToCrea = true;
@@ -135,94 +132,74 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 		}
 	}
 
-	/*
-	 * A este metodo se le llama cuando un boton de nuestro raton deja de ser
-	 * pulsado
-	 */
+	/* This method is called when a mouse button is released */
 	public void mouseReleased(MouseEvent e) {
 		unionBool = false;
-		// Cuando arrastramos para crear una asociacion de forma valida. Para
-		// crear una asoc. de forma valida:
-		// 1. Debe de haber una clase seleccionada (preselectedClassBool ==
-		// true)
-		// 2. Se debe de arrastar el raton con el click izquierdo empezando
-		// desde la clase seleccionada (assocToCrea == true)
-		// 3. Se debe de soltar el raton encima de una clase existente
-		// (classOn != null)
+		// to create an association:
+		// 1. A class must be selected (preselectedClassBool = true)
+		// 2. You must drag the mouse with the left click starting from the selected class (assocToCrea == true)
+		// 3. The mouse must be released on top of an existing class (classOn != null)
 		if (preselectedClassBool && (classOn != null) && assocToCrea) {
-			// Ya no se pueden hacer mas asociaciones hasta que se seleccione
-			// otra clase
+			// no more associations can be made until another class is selected
 			assocToCrea = false;
-			// unionBool = false;
-			// Pintamos las clases de blanco
+			// class backgroud = white
 			preselectedClass.isPreselected(false);
 			classOn.isSelected(false);
-			// Creamos asociacion y la anadimos al vector de asociaciones
+			// association is created
 			newAssoc = new Association(preselectedClass, classOn);
 			associations.add(newAssoc);
-			// Anadimos la asociacion a las clases implicadas
+			// we add the association to the implied classes
 			preselectedClass.newAssociation(newAssoc);
-			// En el caso de que no sea una autoAsociacion se aÒadira esta a las
-			// dos clases
 			if (preselectedClass != classOn) {
 				classOn.newAssociation(newAssoc);
 			}
-			// Ya no hay ninguna clase seleccionada
+			// there is no class selected
 			preselectedClass = null;
 			preselectedClassBool = false;
 		}
-		// Actualizamos la etiqueta que lleva el recuento de asociaciones
+		// Refresh the association count
 		window.updateNAssociations(this);
 
 	}
 
-	/* A este metodo se le llama cuando el raton entra en nuestro diagrama */
 	public void mouseEntered(MouseEvent e) {
 	}
 
-	/* A este metodo se le llama cuando el raton sale de nuestro diagrama */
 	public void mouseExited(MouseEvent e) {
-		// String a = classPressed.getName();
 	}
 
-	/*
-	 * A este metodo se le llama cuando es clickado (pulsar + soltar) algun
-	 * boton del raton de nuestro ordenador
-	 */
+	/* This method is called when a mouse button is clicked */
 	public void mouseClicked(MouseEvent e) {
-		// Si no hay ninguna clase seleccionada, y hacemos click derecho sobre
-		// una clase, esta se eliminara
+		// If there isn't a class selected and the right button is clicked on a class, the class is removed
 		if (!preselectedClassBool && (e.getButton() == MouseEvent.BUTTON3) && (classOn != null)) {
-			// Eliminamos asociaciones, para ello pedimos que se nos
-			// proporcionen las asociaciones
+			// Remove associatons
 			assocToRemove = classOn.getAssociations();
 			for (int i = 0; i < assocToRemove.size(); i++) {
 				associations.remove(assocToRemove.get(i));
 			}
-			// Eliminamos clase a la que le hemos hecho click dcho
+			// Remove class
 			classes.remove(classOn);
-			// Actualizamos contadores
+			// Refresh counters
 			window.updateNClasses(this);
 			window.updateNAssociations(this);
 		}
 	}
 
 	/********************************************/
-	/******* Metodos de MouseMotionListener *****/
+	/******* MouseMotionListener's methods ******/
 	/********************************************/
 
 	/*
-	 * A este metodo se le llama siempre que el raton se mueve por el diagrama
+	 * This method is called when the mouse is moved
 	 */
 	public void mouseMoved(MouseEvent e) {
 		for (int i = classes.size() - 1; i >= 0; i--) {
-
-			// Coordenadas de la esquina superior del rectangulo
-			xCoor = classes.get(i).getPosX(); // Eje de la x
-			yCoor = classes.get(i).getPosY(); // Eje de la y
-			// Parametros del rectangulo
-			wid = classes.get(i).getWidth(); // Ancho del rectangulo
-			hei = classes.get(i).getHeight(); // Alto del rectangulo
+			
+			xCoor = classes.get(i).getPosX(); // x axis
+			yCoor = classes.get(i).getPosY(); // y axis
+			
+			wid = classes.get(i).getWidth(); // rectangle width
+			hei = classes.get(i).getHeight(); // rectangle height
 
 			rec = new Rectangle(xCoor, yCoor, wid, hei);
 
