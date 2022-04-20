@@ -192,6 +192,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 	/*
 	 * This method is called when the mouse is moved
 	 */
+	
 	public void mouseMoved(MouseEvent e) {
 		for (int i = classes.size() - 1; i >= 0; i--) {
 			
@@ -202,46 +203,36 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 			hei = classes.get(i).getHeight(); // rectangle height
 
 			rec = new Rectangle(xCoor, yCoor, wid, hei);
-
-			// Si el rectangulo contiene al raton guardamos esa clase en la
-			// variables classOn
+			
+			// the mouse is over a class, we call that class classOn
+			
 			if (rec.contains(e.getPoint())) {
 				classOn = classes.get(i);
 				indexClassOn = i;
-				// Si la clase sobre la que esta el raton no se encuentra
-				// dibujada por encima de las demas clases se llama al metodo
-				// overlap() y hace que se redibuje por encima reorganizando el
-				// vector de clases
+				//If the class the mouse is on is not drawn on top of the other classes, overlap() method is called
 				if (i != classes.size() - 1) {
 					overlap();
 				}
 				break;
 			} else {
-				// Si el raton no esta sobre ninguna clase, en la variable
-				// classOn no se guardara nada
+				// the mouse isn't over a class
 				classOn = null;
 			}
 		}
 	}
 
 	/*
-	 * A este metodo se le llama siempre que se mueve el raton con algun boton
-	 * del raton pulsado
+	 * this method is called when the mouse is dragged
 	 */
+	
 	public void mouseDragged(MouseEvent e) {
 
-		if (!preselectedClassBool && (classOn != null)) {
-			// Si hay alguna clase seleccionada no se podra mover ningun
-			// elemento
-			// del diagrama (preselectedClassBool == false). Ademas, para que se
-			// pueda arrastrar una clase el raton debera estar sobre ella
-			// (classOn != null)
-
-			// Le cambiamos las coordenadas a la clase que queremos mover
-			classOn.moveClass(e.getX(), e.getY());
+		if (!preselectedClassBool && (classOn != null)) {			
+			// if a class is selected, we disable other actions (preselectedClassBool == false). 
+			// for a class to be dragged, the mouse must be on it (classOn != null)
+			classOn.moveClass(e.getX(), e.getY());	
 		} else if (preselectedClassBool) {
-			mouseMoved(e);
-			// !!!!!!!!!SEGUIR AQUIIIIIII
+			mouseMoved(e);			
 			coorX1 = preselectedClass.getPosX() + (int) (preselectedClass.getWidth() / 2);
 			coorY1 = preselectedClass.getPosY() + (int) (preselectedClass.getHeight() / 2);
 			coorX2 = e.getX();
@@ -252,36 +243,36 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 				}
 				classOnPrev = classOn;
 				classOn.isSelected(true);
-
-
-
 			} else {
 				if (classOnPrev != null) {
 					classOnPrev.isSelected(false);
 				}
 			}
-
 		}
-
 	}
 
 	/********************************************/
-	/*********** Metodos de KeyListener *********/
+	/*********** KeyListener's methods **********/
 	/********************************************/
 
 	/*
-	 * A este metodo se le llama siempre que el raton este sobre una clase
-	 * creada y se escriba una tecla del teclado
+	 * this method is called when a key is typed
 	 */
 	public void keyTyped(KeyEvent e) {
 		sTyped = Character.compare('s', e.getKeyChar()) == 0;
 		STyped = Character.compare('S', e.getKeyChar()) == 0;
+		// s is typed
 		if (sTyped || STyped) {
+			// there is no class selected
 			if (!preselectedClassBool && (classOn != null)) {
+				// select class
 				preselectedClassBool = true;
+				// save class selected
 				preselectedClass = classOn;
 				preselectedClass.isPreselected(preselectedClassBool);
+			//there is class selected
 			} else if (preselectedClassBool) {
+				// unselect the class
 				preselectedClassBool = false;
 				preselectedClass.isPreselected(preselectedClassBool);
 				preselectedClass = null;
@@ -289,17 +280,10 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 		}
 	}
 
-	/*
-	 * A este metodo se le llama siempre que el raton este sobre una clase
-	 * creada y se presione una tecla del teclado
-	 */
+	
 	public void keyPressed(KeyEvent e) {
 	}
 
-	/*
-	 * A este metodo se le llama siempre que el raton este sobre una clase
-	 * creada y se deje de presionar una tecla del teclado
-	 */
 	public void keyReleased(KeyEvent e) {
 	}
 }
